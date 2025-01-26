@@ -5,11 +5,10 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class Member extends Authenticatable implements MustVerifyEmail
 {
-	use HasApiTokens, Notifiable;
+	use Notifiable;
 
 	protected $fillable = [
 		'nama',

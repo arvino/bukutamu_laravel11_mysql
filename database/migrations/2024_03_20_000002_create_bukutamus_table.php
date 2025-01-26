@@ -8,13 +8,15 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('bukutamus', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('member_id')->constrained('members')->onDelete('cascade');
-            $table->text('messages');
-            $table->string('gambar')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('bukutamus')) {
+            Schema::create('bukutamus', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('member_id')->constrained('members')->onDelete('cascade');
+                $table->text('messages');
+                $table->string('gambar')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     public function down()
