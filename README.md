@@ -2,6 +2,54 @@
 
 Aplikasi buku tamu modern yang dibangun dengan Laravel 11, menampilkan antarmuka yang bersih untuk mengelola catatan pengunjung secara digital.
 
+## Struktur Proyek
+```
+bukutamu_laravel11/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── AdminController.php
+│   │   │   ├── Auth/
+│   │   │   │   └── AuthController.php
+│   │   │   ├── BukutamuController.php
+│   │   │   └── ProfileController.php
+│   │   └── Middleware/
+│   │       └── CheckRole.php
+│   └── Models/
+│       ├── Bukutamu.php
+│       └── Member.php
+├── config/
+│   └── auth.php
+├── database/
+│   ├── migrations/
+│   │   ├── 2024_03_20_000001_create_members_table.php
+│   │   ├── 2024_03_20_000002_create_bukutamus_table.php
+│   │   └── 2024_03_20_000003_update_members_table.php
+│   └── seeders/
+│       └── AdminSeeder.php
+├── resources/
+│   └── views/
+│       ├── admin/
+│       │   ├── dashboard.blade.php
+│       │   └── members/
+│       │       ├── edit.blade.php
+│       │       └── index.blade.php
+│       ├── auth/
+│       │   ├── login.blade.php
+│       │   └── register.blade.php
+│       ├── bukutamu/
+│       │   ├── form.blade.php
+│       │   ├── index.blade.php
+│       │   └── show.blade.php
+│       ├── layouts/
+│       │   └── app.blade.php
+│       └── profile/
+│           └── edit.blade.php
+└── routes/
+    ├── auth.php
+    └── web.php
+```
+
 ## Gambaran Umum
 
 Aplikasi ini menyediakan solusi digital untuk mengelola catatan pengunjung dengan fitur-fitur berikut:
@@ -166,7 +214,7 @@ Aplikasi ini menyediakan solusi digital untuk mengelola catatan pengunjung denga
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
    DB_PORT=3306
-   DB_DATABASE=bukutamu_laravel12
+   DB_DATABASE=bukutamu_laravel11
    DB_USERNAME=root
    DB_PASSWORD=
    ```
@@ -176,15 +224,20 @@ Aplikasi ini menyediakan solusi digital untuk mengelola catatan pengunjung denga
    php artisan key:generate
    ```
 
-8. Jalankan migrasi:
+8. Jalankan migrasi dan seeder:
    ```bash
    php artisan migrate
+   php artisan db:seed --class=AdminSeeder
    ```
 
 9. Jalankan server pengembangan:
    ```bash
    php artisan serve
    ```
+
+## Kredensial Default Admin
+- Email: admin@example.com
+- Password: password
 
 ## Alur Aplikasi
 
@@ -221,12 +274,6 @@ npm run dev
 
 Aplikasi ini adalah perangkat lunak open-source yang dilisensikan di bawah [Lisensi MIT](https://opensource.org/licenses/MIT).
 
-## Dibuat Oleh
-
-- **Nama Developer**: Arvino Zulka
-- **Email**: arvinozulka@gmail.com
-- **Website**: https://www.arvino.my.id/
-- **GitHub**: https://github.com/arvino
 
 ## Deployment
 
@@ -483,3 +530,9 @@ Aplikasi ini adalah perangkat lunak open-source yang dilisensikan di bawah [Lise
    - Database connection: Periksa kredensial database
    - Storage link: Jalankan `php artisan storage:link`
 
+## Dibuat Oleh
+
+- **Nama Developer**: Arvino Zulka
+- **Email**: arvinozulka@gmail.com
+- **Website**: https://www.arvino.my.id/
+- **GitHub**: https://github.com/arvino

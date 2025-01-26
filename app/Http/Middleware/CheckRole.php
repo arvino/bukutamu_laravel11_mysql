@@ -10,7 +10,7 @@ class CheckRole
 {
 	public function handle(Request $request, Closure $next, string $role): Response
 	{
-		if (!auth()->check() || !auth()->user()->role === $role) {
+		if (!auth()->check() || auth()->user()->role !== $role) {
 			return redirect()->route('home')
 				->with('error', 'Anda tidak memiliki akses ke halaman tersebut');
 		}
