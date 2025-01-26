@@ -36,8 +36,8 @@
 						</div>
 
 						<div class="d-flex justify-content-between">
-							<button type="submit" class="btn btn-primary">Update Entry</button>
-							<a href="{{ route('bukutamu.index') }}" class="btn btn-secondary">Cancel</a>
+							<a href="{{ route('home') }}" class="btn btn-secondary">Kembali</a>
+							<button type="submit" class="btn btn-primary">Update</button>
 						</div>
 					</form>
 				</div>

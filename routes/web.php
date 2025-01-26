@@ -7,13 +7,19 @@ use Illuminate\Support\Facades\Route;
 
 // Public routes
 Route::get('/', [BukutamuController::class, 'index'])->name('home');
-Route::get('/bukutamu/{bukutamu}', [BukutamuController::class, 'show'])->name('bukutamu.show');
 
 // Authenticated routes
 Route::middleware('auth')->group(function () {
     // Member routes
     Route::middleware(['auth', 'verified'])->group(function () {
-        Route::resource('bukutamu', BukutamuController::class);
+        // Bukutamu routes - Perhatikan urutan
+        Route::get('/bukutamu/create', [BukutamuController::class, 'create'])->name('bukutamu.create');
+        Route::post('/bukutamu', [BukutamuController::class, 'store'])->name('bukutamu.store');
+        Route::get('/bukutamu/{bukutamu}/edit', [BukutamuController::class, 'edit'])->name('bukutamu.edit');
+        Route::put('/bukutamu/{bukutamu}', [BukutamuController::class, 'update'])->name('bukutamu.update');
+        Route::delete('/bukutamu/{bukutamu}', [BukutamuController::class, 'destroy'])->name('bukutamu.destroy');
+        
+        // Profile routes
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     });
@@ -28,5 +34,18 @@ Route::middleware('auth')->group(function () {
         Route::get('/export/bukutamu', [AdminController::class, 'exportBukutamu'])->name('export.bukutamu');
     });
 });
+
+// Public bukutamu route - Pindahkan ke bawah setelah route create
+Route::get('/bukutamu/{bukutamu}', [BukutamuController::class, 'show'])->name('bukutamu.show');
+
+// Development routes
+if (app()->environment('local')) {
+    Route::get('/dev/verify/{id}', function ($id) {
+        $user = \App\Models\Member::findOrFail($id);
+        $user->markEmailAsVerified();
+        return redirect()->route('home')
+            ->with('success', 'Email berhasil diverifikasi!');
+    })->name('dev.verify');
+}
 
 require __DIR__.'/auth.php';

@@ -37,35 +37,37 @@ class BukutamuController extends Controller
 	public function create()
 	{
 		if (!auth()->user()->canSubmitToday()) {
-			return redirect()->route('bukutamu.index')
-				->with('error', 'Anda sudah submit pesan hari ini');
+			return redirect()->route('home')
+				->with('error', 'Anda sudah membuat buku tamu hari ini.');
 		}
+
 		return view('bukutamu.create');
 	}
 
 	public function store(Request $request)
 	{
-		$request->validate([
-			'messages' => 'required|string',
-			'gambar' => 'nullable|image|max:2048'
+		if (!auth()->user()->canSubmitToday()) {
+			return redirect()->route('home')
+				->with('error', 'Anda sudah membuat buku tamu hari ini.');
+		}
+
+		$validated = $request->validate([
+			'messages' => 'required|string|max:1000',
+			'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
 		]);
 
-		if (!auth()->user()->canSubmitToday()) {
-			return redirect()->route('bukutamu.index')
-				->with('error', 'Anda sudah submit pesan hari ini');
-		}
-
-		$data = $request->all();
-		$data['member_id'] = auth()->id();
+		$bukutamu = new Bukutamu($validated);
+		$bukutamu->member_id = auth()->id();
 
 		if ($request->hasFile('gambar')) {
-			$data['gambar'] = $request->file('gambar')->store('bukutamu', 'public');
+			$path = $request->file('gambar')->store('bukutamu', 'public');
+			$bukutamu->gambar = $path;
 		}
 
-		Bukutamu::create($data);
+		$bukutamu->save();
 
-		return redirect()->route('bukutamu.index')
-			->with('success', 'Pesan berhasil ditambahkan');
+		return redirect()->route('bukutamu.show', $bukutamu)
+			->with('success', 'Buku tamu berhasil dibuat.');
 	}
 
 	public function show(Bukutamu $bukutamu)
@@ -76,7 +78,7 @@ class BukutamuController extends Controller
 	public function edit(Bukutamu $bukutamu)
 	{
 		if (!auth()->user()->isAdmin() && $bukutamu->member_id !== auth()->id()) {
-			return redirect()->route('bukutamu.index')
+			return redirect()->route('home')
 				->with('error', 'Unauthorized access.');
 		}
 		return view('bukutamu.edit', compact('bukutamu'));
@@ -85,7 +87,7 @@ class BukutamuController extends Controller
 	public function update(Request $request, Bukutamu $bukutamu)
 	{
 		if (!auth()->user()->isAdmin() && $bukutamu->member_id !== auth()->id()) {
-			return redirect()->route('bukutamu.index')
+			return redirect()->route('home')
 				->with('error', 'Unauthorized access.');
 		}
 
@@ -110,7 +112,7 @@ class BukutamuController extends Controller
 	public function destroy(Bukutamu $bukutamu)
 	{
 		if (!auth()->user()->isAdmin()) {
-			return redirect()->route('bukutamu.index')
+			return redirect()->route('home')
 				->with('error', 'Unauthorized access.');
 		}
 
@@ -119,7 +121,7 @@ class BukutamuController extends Controller
 		}
 
 		$bukutamu->delete();
-		return redirect()->route('bukutamu.index')
+		return redirect()->route('home')
 			->with('success', 'Entry deleted successfully.');
 	}
 }

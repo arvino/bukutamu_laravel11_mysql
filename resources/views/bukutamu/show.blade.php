@@ -38,7 +38,7 @@
 		</div>
 
 		<div class="mt-3">
-			<a href="{{ route('bukutamu.index') }}" class="btn btn-secondary">
+			<a href="{{ route('home') }}" class="btn btn-secondary">
 				Kembali
 			</a>
 			
@@ -62,6 +62,22 @@
 					</form>
 				@endif
 			@endauth
+		</div>
+	</div>
+
+	<div class="card-footer">
+		<div class="d-flex justify-content-between">
+			<a href="{{ route('home') }}" class="btn btn-secondary">Kembali</a>
+			@if(auth()->check() && (auth()->user()->isAdmin() || auth()->id() === $bukutamu->member_id))
+				<div>
+					<a href="{{ route('bukutamu.edit', $bukutamu) }}" class="btn btn-primary">Edit</a>
+					<form action="{{ route('bukutamu.destroy', $bukutamu) }}" method="POST" class="d-inline">
+						@csrf
+						@method('DELETE')
+						<button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+					</form>
+				</div>
+			@endif
 		</div>
 	</div>
 </div>
