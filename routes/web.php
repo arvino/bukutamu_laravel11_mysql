@@ -27,10 +27,15 @@ Route::middleware('auth')->group(function () {
     // Admin routes
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+        
+        // Member management routes
         Route::get('/members', [AdminController::class, 'members'])->name('members.index');
+        Route::get('/members/create', [AdminController::class, 'createMember'])->name('members.create');
+        Route::post('/members', [AdminController::class, 'storeMember'])->name('members.store');
         Route::get('/members/{member}/edit', [AdminController::class, 'editMember'])->name('members.edit');
         Route::put('/members/{member}', [AdminController::class, 'updateMember'])->name('members.update');
         Route::delete('/members/{member}', [AdminController::class, 'destroyMember'])->name('members.destroy');
+        
         Route::get('/export/bukutamu', [AdminController::class, 'exportBukutamu'])->name('export.bukutamu');
     });
 });

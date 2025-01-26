@@ -5,8 +5,15 @@
 @section('content')
 <div class="container">
 	<div class="d-flex justify-content-between align-items-center mb-4">
-		<h2>Member Management</h2>
-		<a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+		<h2>Manajemen Member</h2>
+		<div>
+			<a href="{{ route('admin.members.create') }}" class="btn btn-primary">
+				Tambah Member
+			</a>
+			<a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
+				Kembali ke Dashboard
+			</a>
+		</div>
 	</div>
 
 	<div class="card">
@@ -21,7 +28,8 @@
 							<th>No</th>
 							<th>Nama</th>
 							<th>Email</th>
-							<th>No. Telepon</th>
+							<th>Phone</th>
+							<th>Status</th>
 							<th>Tanggal Daftar</th>
 							<th>Aksi</th>
 						</tr>
@@ -33,6 +41,13 @@
 								<td>{{ $member->nama }}</td>
 								<td>{{ $member->email }}</td>
 								<td>{{ $member->phone }}</td>
+								<td>
+									@if($member->email_verified_at)
+										<span class="badge bg-success">Active</span>
+									@else
+										<span class="badge bg-warning">Pending</span>
+									@endif
+								</td>
 								<td>{{ $member->created_at->format('d/m/Y H:i') }}</td>
 								<td>
 									<div class="d-flex gap-2">
@@ -52,7 +67,7 @@
 							</tr>
 						@empty
 							<tr>
-								<td colspan="6" class="text-center">Tidak ada data</td>
+								<td colspan="7" class="text-center">Tidak ada data</td>
 							</tr>
 						@endforelse
 					</tbody>

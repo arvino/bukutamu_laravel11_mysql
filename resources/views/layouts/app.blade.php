@@ -26,6 +26,32 @@
 					<li class="nav-item">
 						<a class="nav-link" href="{{ route('home') }}">Buku Tamu</a>
 					</li>
+					@auth
+						@if(auth()->user()->isAdmin())
+							<li class="nav-item dropdown">
+								<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+									Admin Menu
+								</a>
+								<ul class="dropdown-menu">
+									<li>
+										<a class="dropdown-item" href="{{ route('admin.dashboard') }}">
+											Dashboard
+										</a>
+									</li>
+									<li>
+										<a class="dropdown-item" href="{{ route('admin.members.index') }}">
+											Kelola Member
+										</a>
+									</li>
+									<li>
+										<a class="dropdown-item" href="{{ route('admin.export.bukutamu') }}">
+											Export Buku Tamu
+										</a>
+									</li>
+								</ul>
+							</li>
+						@endif
+					@endauth
 				</ul>
 				<ul class="navbar-nav">
 					@guest
@@ -36,11 +62,6 @@
 							<a class="nav-link" href="{{ route('register') }}">Register</a>
 						</li>
 					@else
-						@if(auth()->user()->isAdmin())
-							<li class="nav-item">
-								<a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard Admin</a>
-							</li>
-						@endif
 						<li class="nav-item dropdown">
 							<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
 								{{ auth()->user()->nama }}

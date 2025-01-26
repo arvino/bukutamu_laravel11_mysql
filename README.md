@@ -2,6 +2,91 @@
 
 Aplikasi buku tamu modern yang dibangun dengan Laravel 11, menampilkan antarmuka yang bersih untuk mengelola catatan pengunjung secara digital.
 
+## Screenshots
+
+### Halaman Admin
+![Halaman Admin](docs/screenshots/admin.png)
+
+## Fitur
+
+- Autentikasi user (login, register, reset password)
+- Verifikasi email
+- Role based access control (admin & member)
+- CRUD buku tamu
+- Upload gambar
+- Export data ke Excel
+- Manajemen member oleh admin
+- Responsive design dengan Bootstrap 5
+
+## Teknologi
+
+- Laravel 11
+- PHP 8.2
+- MySQL/MariaDB
+- Bootstrap 5
+- SweetAlert2
+- jQuery
+- Laravel Excel
+
+## Instalasi
+
+1. Clone repository
+```bash
+git clone https://github.com/username/bukutamu-laravel.git
+cd bukutamu-laravel
+```
+
+2. Install dependencies
+```bash
+composer install
+npm install
+```
+
+3. Setup environment
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+4. Konfigurasi database di .env
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=bukutamu_laravel
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+5. Migrasi dan seeding
+```bash
+php artisan migrate --seed
+```
+
+6. Link storage
+```bash
+php artisan storage:link
+```
+
+7. Jalankan aplikasi
+```bash
+php artisan serve
+```
+
+## Default Users
+
+**Admin:**
+- Email: admin@example.com
+- Password: password
+
+**Member:**
+- Email: member@example.com  
+- Password: password
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
 ## Struktur Proyek
 ```
 bukutamu_laravel11/
