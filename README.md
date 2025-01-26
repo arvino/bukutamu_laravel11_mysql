@@ -629,3 +629,293 @@ Aplikasi ini adalah perangkat lunak open-source yang dilisensikan di bawah [Lise
 
 ### Halaman Home
 ![Halaman Home](docs/screenshots/home.png)
+
+## API Documentation
+
+### Authentication Endpoints
+
+#### Login
+```http
+POST /api/auth/login
+```
+**Request Body:**
+```json
+{
+    "email": "user@example.com",
+    "password": "password"
+}
+```
+**Response (200):**
+```json
+{
+    "status": "success",
+    "data": {
+        "token": "Bearer token...",
+        "user": {
+            "id": 1,
+            "nama": "User Name",
+            "email": "user@example.com",
+            "role": "member"
+        }
+    }
+}
+```
+
+#### Register
+```http
+POST /api/auth/register
+```
+**Request Body:**
+```json
+{
+    "nama": "New User",
+    "email": "newuser@example.com",
+    "phone": "081234567890",
+    "password": "password",
+    "password_confirmation": "password"
+}
+```
+**Response (201):**
+```json
+{
+    "status": "success",
+    "message": "Registration successful",
+    "data": {
+        "user": {
+            "id": 2,
+            "nama": "New User",
+            "email": "newuser@example.com",
+            "role": "member"
+        }
+    }
+}
+```
+
+### Buku Tamu Endpoints
+
+#### Get All Entries
+```http
+GET /api/bukutamu
+```
+**Headers:**
+```
+Authorization: Bearer {token}
+```
+**Query Parameters:**
+- `page`: Page number (default: 1)
+- `search`: Search query
+- `date_from`: Filter by start date (Y-m-d)
+- `date_to`: Filter by end date (Y-m-d)
+
+**Response (200):**
+```json
+{
+    "status": "success",
+    "data": {
+        "current_page": 1,
+        "data": [
+            {
+                "id": 1,
+                "member_id": 1,
+                "messages": "Pesan buku tamu",
+                "gambar": "bukutamu/image.jpg",
+                "created_at": "2024-03-25T10:00:00.000000Z",
+                "member": {
+                    "id": 1,
+                    "nama": "User Name"
+                }
+            }
+        ],
+        "total": 10,
+        "per_page": 10
+    }
+}
+```
+
+#### Create Entry
+```http
+POST /api/bukutamu
+```
+**Headers:**
+```
+Authorization: Bearer {token}
+Content-Type: multipart/form-data
+```
+**Request Body:**
+```form-data
+messages: "Pesan buku tamu"
+gambar: [file]
+```
+**Response (201):**
+```json
+{
+    "status": "success",
+    "message": "Entry created successfully",
+    "data": {
+        "id": 2,
+        "messages": "Pesan buku tamu",
+        "gambar": "bukutamu/new-image.jpg",
+        "created_at": "2024-03-25T10:30:00.000000Z"
+    }
+}
+```
+
+#### Get Single Entry
+```http
+GET /api/bukutamu/{id}
+```
+**Headers:**
+```
+Authorization: Bearer {token}
+```
+**Response (200):**
+```json
+{
+    "status": "success",
+    "data": {
+        "id": 1,
+        "member_id": 1,
+        "messages": "Pesan buku tamu",
+        "gambar": "bukutamu/image.jpg",
+        "created_at": "2024-03-25T10:00:00.000000Z",
+        "member": {
+            "id": 1,
+            "nama": "User Name"
+        }
+    }
+}
+```
+
+#### Update Entry
+```http
+POST /api/bukutamu/{id}
+```
+**Headers:**
+```
+Authorization: Bearer {token}
+Content-Type: multipart/form-data
+```
+**Request Body:**
+```form-data
+_method: PUT
+messages: "Pesan yang diupdate"
+gambar: [file] // Optional
+```
+**Response (200):**
+```json
+{
+    "status": "success",
+    "message": "Entry updated successfully",
+    "data": {
+        "id": 1,
+        "messages": "Pesan yang diupdate",
+        "gambar": "bukutamu/updated-image.jpg"
+    }
+}
+```
+
+#### Delete Entry
+```http
+DELETE /api/bukutamu/{id}
+```
+**Headers:**
+```
+Authorization: Bearer {token}
+```
+**Response (200):**
+```json
+{
+    "status": "success",
+    "message": "Entry deleted successfully"
+}
+```
+
+### Admin Endpoints
+
+#### Get All Members (Admin Only)
+```http
+GET /api/admin/members
+```
+**Headers:**
+```
+Authorization: Bearer {token}
+```
+**Response (200):**
+```json
+{
+    "status": "success",
+    "data": {
+        "current_page": 1,
+        "data": [
+            {
+                "id": 2,
+                "nama": "Member Name",
+                "email": "member@example.com",
+                "phone": "081234567890",
+                "role": "member",
+                "email_verified_at": "2024-03-25T10:00:00.000000Z"
+            }
+        ],
+        "total": 5,
+        "per_page": 10
+    }
+}
+```
+
+#### Export Buku Tamu (Admin Only)
+```http
+GET /api/admin/export/bukutamu
+```
+**Headers:**
+```
+Authorization: Bearer {token}
+```
+**Response (200):**
+```
+Binary file (Excel/CSV)
+```
+
+### Error Responses
+
+#### Unauthorized (401)
+```json
+{
+    "status": "error",
+    "message": "Unauthenticated"
+}
+```
+
+#### Validation Error (422)
+```json
+{
+    "status": "error",
+    "message": "Validation failed",
+    "errors": {
+        "field": [
+            "Error message"
+        ]
+    }
+}
+```
+
+#### Not Found (404)
+```json
+{
+    "status": "error",
+    "message": "Resource not found"
+}
+```
+
+#### Server Error (500)
+```json
+{
+    "status": "error",
+    "message": "Internal server error"
+}
+```
+
+### Rate Limiting
+All API endpoints are rate limited to 60 requests per minute per user. When exceeded, you'll receive a 429 Too Many Requests response.
+
+### Authentication
+All endpoints except login and register require a valid Bearer token in the Authorization header. The token can be obtained from the login endpoint.
