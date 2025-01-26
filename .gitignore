@@ -24,3 +24,5 @@ yarn-error.log
 # Tambahkan pengecualian untuk folder screenshots
 !docs/screenshots/
 !docs/screenshots/*.png
+!/storage/app/public/
+!/storage/app/public/bukutamu/

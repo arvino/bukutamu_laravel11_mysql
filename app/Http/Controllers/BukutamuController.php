@@ -60,8 +60,17 @@ class BukutamuController extends Controller
 		$bukutamu->member_id = auth()->id();
 
 		if ($request->hasFile('gambar')) {
-			$path = $request->file('gambar')->store('bukutamu', 'public');
-			$bukutamu->gambar = $path;
+			// Pastikan folder exists
+			$path = storage_path('app/public/bukutamu');
+			if (!file_exists($path)) {
+				mkdir($path, 0775, true);
+			}
+
+			// Upload gambar
+			$file = $request->file('gambar');
+			$filename = time() . '_' . $file->getClientOriginalName();
+			$file->storeAs('public/bukutamu', $filename);
+			$bukutamu->gambar = 'bukutamu/' . $filename;
 		}
 
 		$bukutamu->save();
@@ -93,15 +102,20 @@ class BukutamuController extends Controller
 
 		$validated = $request->validate([
 			'messages' => 'required|string|max:1000',
-			'gambar' => 'nullable|image|max:2048'
+			'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
 		]);
 
 		if ($request->hasFile('gambar')) {
+			// Hapus gambar lama
 			if ($bukutamu->gambar) {
 				Storage::disk('public')->delete($bukutamu->gambar);
 			}
-			$path = $request->file('gambar')->store('bukutamu', 'public');
-			$validated['gambar'] = $path;
+
+			// Upload gambar baru
+			$file = $request->file('gambar');
+			$filename = time() . '_' . $file->getClientOriginalName();
+			$file->storeAs('public/bukutamu', $filename);
+			$validated['gambar'] = 'bukutamu/' . $filename;
 		}
 
 		$bukutamu->update($validated);

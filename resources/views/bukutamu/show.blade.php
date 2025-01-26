@@ -27,7 +27,7 @@
 			</div>
 			<div class="col-md-6">
 				@if($bukutamu->gambar)
-					<img src="{{ Storage::url($bukutamu->gambar) }}" 
+					<img src="{{ asset('storage/' . $bukutamu->gambar) }}" 
 						 alt="Gambar" class="img-fluid rounded">
 				@else
 					<div class="alert alert-info">

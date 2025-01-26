@@ -47,7 +47,7 @@
 								<td>{{ Str::limit($bukutamu->messages, 50) }}</td>
 								<td>
 									@if($bukutamu->gambar)
-										<img src="{{ Storage::url($bukutamu->gambar) }}" 
+										<img src="{{ asset('storage/' . $bukutamu->gambar) }}" 
 											 alt="Gambar" class="img-thumbnail" 
 											 style="max-height: 50px">
 									@else
