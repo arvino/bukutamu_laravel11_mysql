@@ -536,3 +536,11 @@ Aplikasi ini adalah perangkat lunak open-source yang dilisensikan di bawah [Lise
 - **Email**: arvinozulka@gmail.com
 - **Website**: https://www.arvino.my.id/
 - **GitHub**: https://github.com/arvino
+
+## Screenshot Aplikasi
+
+### Halaman Registrasi
+![Halaman Registrasi](docs/screenshots/register.png)
+
+### Halaman Home
+![Halaman Home](docs/screenshots/home.png)

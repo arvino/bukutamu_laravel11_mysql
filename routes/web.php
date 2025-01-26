@@ -19,7 +19,7 @@ Route::middleware('auth')->group(function () {
     });
     
     // Admin routes
-    Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
         Route::get('/members', [AdminController::class, 'members'])->name('members.index');
         Route::get('/members/{member}/edit', [AdminController::class, 'editMember'])->name('members.edit');

@@ -21,3 +21,6 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+# Tambahkan pengecualian untuk folder screenshots
+!docs/screenshots/
+!docs/screenshots/*.png
