@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\BukutamuController;
+use App\Http\Controllers\Api\BukutamuApiController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -16,5 +16,5 @@ Route::middleware('auth:sanctum')->group(function () {
 	Route::put('/profile', [AuthController::class, 'updateProfile']);
 
 	// Bukutamu routes
-	Route::apiResource('bukutamu', BukutamuController::class);
+	Route::apiResource('bukutamu', BukutamuApiController::class);
 });

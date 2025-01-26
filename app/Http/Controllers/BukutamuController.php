@@ -8,42 +8,64 @@ use Illuminate\Support\Facades\Storage;
 
 class BukutamuController extends Controller
 {
-	public function index()
+	public function index(Request $request)
 	{
-		$entries = Bukutamu::with('member')->latest()->paginate(10);
-		return view('bukutamu.index', compact('entries'));
+		$query = Bukutamu::with('member');
+
+		// Filter berdasarkan tanggal
+		if ($request->filled('date_from')) {
+			$query->whereDate('created_at', '>=', $request->date_from);
+		}
+		if ($request->filled('date_to')) {
+			$query->whereDate('created_at', '<=', $request->date_to);
+		}
+
+		// Pencarian berdasarkan nama/pesan
+		if ($request->filled('search')) {
+			$search = $request->search;
+			$query->where(function($q) use ($search) {
+				$q->whereHas('member', function($q) use ($search) {
+					$q->where('nama', 'like', "%{$search}%");
+				})->orWhere('messages', 'like', "%{$search}%");
+			});
+		}
+
+		$bukutamus = $query->latest()->paginate(10);
+		return view('bukutamu.index', compact('bukutamus'));
 	}
 
 	public function create()
 	{
-		if (auth()->user()->hasPostedToday()) {
+		if (!auth()->user()->canSubmitToday()) {
 			return redirect()->route('bukutamu.index')
-				->with('error', 'You can only post once per day.');
+				->with('error', 'Anda sudah submit pesan hari ini');
 		}
 		return view('bukutamu.create');
 	}
 
 	public function store(Request $request)
 	{
-		if (auth()->user()->hasPostedToday()) {
-			return back()->with('error', 'You can only post once per day.');
-		}
-
-		$validated = $request->validate([
-			'messages' => 'required|string|max:1000',
+		$request->validate([
+			'messages' => 'required|string',
 			'gambar' => 'nullable|image|max:2048'
 		]);
 
-		$entry = new Bukutamu($validated);
-		$entry->member_id = auth()->id();
-
-		if ($request->hasFile('gambar')) {
-			$path = $request->file('gambar')->store('bukutamu', 'public');
-			$entry->gambar = $path;
+		if (!auth()->user()->canSubmitToday()) {
+			return redirect()->route('bukutamu.index')
+				->with('error', 'Anda sudah submit pesan hari ini');
 		}
 
-		$entry->save();
-		return redirect()->route('bukutamu.index')->with('success', 'Entry created successfully.');
+		$data = $request->all();
+		$data['member_id'] = auth()->id();
+
+		if ($request->hasFile('gambar')) {
+			$data['gambar'] = $request->file('gambar')->store('bukutamu', 'public');
+		}
+
+		Bukutamu::create($data);
+
+		return redirect()->route('bukutamu.index')
+			->with('success', 'Pesan berhasil ditambahkan');
 	}
 
 	public function show(Bukutamu $bukutamu)

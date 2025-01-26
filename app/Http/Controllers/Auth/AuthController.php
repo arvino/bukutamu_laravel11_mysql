@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
@@ -23,14 +24,15 @@ class AuthController extends Controller
 			'password' => ['required'],
 		]);
 
-		if (Auth::attempt($credentials)) {
+		if (Auth::attempt($credentials, $request->boolean('remember'))) {
 			$request->session()->regenerate();
-			return redirect()->intended('/dashboard');
+			return redirect()->intended(route('home'))
+				->with('success', 'Selamat datang kembali!');
 		}
 
 		return back()->withErrors([
-			'email' => 'The provided credentials do not match our records.',
-		]);
+			'email' => 'Email atau password salah.',
+		])->onlyInput('email');
 	}
 
 	public function showRegister()
@@ -40,22 +42,27 @@ class AuthController extends Controller
 
 	public function register(Request $request)
 	{
-		$request->validate([
+		$validated = $request->validate([
 			'nama' => ['required', 'string', 'max:255'],
-			'phone' => ['required', 'string', 'max:20'],
 			'email' => ['required', 'string', 'email', 'max:255', 'unique:members'],
+			'phone' => ['required', 'string', 'max:20'],
 			'password' => ['required', 'confirmed', Password::defaults()],
 		]);
 
 		$member = Member::create([
-			'nama' => $request->nama,
-			'phone' => $request->phone,
-			'email' => $request->email,
-			'password' => Hash::make($request->password),
+			'nama' => $validated['nama'],
+			'email' => $validated['email'],
+			'phone' => $validated['phone'],
+			'password' => Hash::make($validated['password']),
+			'role' => 'member',
 		]);
 
+		event(new Registered($member));
+		
 		Auth::login($member);
-		return redirect('/dashboard');
+
+		return redirect()->route('verification.notice')
+			->with('success', 'Registrasi berhasil! Silakan verifikasi email Anda.');
 	}
 
 	public function logout(Request $request)
@@ -63,6 +70,8 @@ class AuthController extends Controller
 		Auth::logout();
 		$request->session()->invalidate();
 		$request->session()->regenerateToken();
-		return redirect('/');
+
+		return redirect()->route('home')
+			->with('success', 'Anda telah keluar.');
 	}
 }

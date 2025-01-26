@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\BukutamuController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -22,14 +23,21 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     
     // Member routes
-    Route::resource('bukutamu', BukutamuController::class)
-        ->except(['show']);
+    Route::middleware(['auth', 'verified'])->group(function () {
+        Route::resource('bukutamu', BukutamuController::class);
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    });
     
     // Admin routes
-    Route::middleware('role:admin')->group(function () {
-        Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-        Route::resource('admin/members', AdminController::class)
-            ->except(['show', 'create', 'store'])
-            ->names('admin.members');
+    Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+        Route::get('/members', [AdminController::class, 'members'])->name('members.index');
+        Route::get('/members/{member}/edit', [AdminController::class, 'editMember'])->name('members.edit');
+        Route::put('/members/{member}', [AdminController::class, 'updateMember'])->name('members.update');
+        Route::delete('/members/{member}', [AdminController::class, 'destroyMember'])->name('members.destroy');
+        Route::get('/export/bukutamu', [AdminController::class, 'exportBukutamu'])->name('export.bukutamu');
     });
 });
+
+require __DIR__.'/auth.php';

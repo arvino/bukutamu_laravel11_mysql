@@ -1,60 +1,67 @@
 @extends('layouts.app')
 
+@section('title', 'Detail Buku Tamu')
+
 @section('content')
-<div class="container">
-	<div class="row justify-content-center">
-		<div class="col-md-8">
-			<div class="card">
-				<div class="card-header d-flex justify-content-between align-items-center">
-					<span>Entry Details</span>
-					<a href="{{ route('bukutamu.index') }}" class="btn btn-sm btn-secondary">Back to List</a>
-				</div>
-				<div class="card-body">
-					<div class="mb-4">
-						<h5>Author</h5>
-						<p>{{ $bukutamu->member->nama }}</p>
-					</div>
-
-					<div class="mb-4">
-						<h5>Posted On</h5>
-						<p>{{ $bukutamu->created_at->format('d M Y H:i') }}</p>
-					</div>
-
-					<div class="mb-4">
-						<h5>Message</h5>
-						<p>{{ $bukutamu->messages }}</p>
-					</div>
-
-					@if($bukutamu->gambar)
-						<div class="mb-4">
-							<h5>Image</h5>
-							<img src="{{ Storage::url($bukutamu->gambar) }}" alt="Entry Image" 
-								class="img-fluid" style="max-height: 400px;">
-						</div>
-					@endif
-
-					@auth
-						@if(auth()->user()->isAdmin() || auth()->id() === $bukutamu->member_id)
-							<div class="mt-4 d-flex gap-2">
-								<a href="{{ route('bukutamu.edit', $bukutamu) }}" 
-									class="btn btn-warning">Edit Entry</a>
-								
-								@if(auth()->user()->isAdmin())
-									<form action="{{ route('bukutamu.destroy', $bukutamu) }}" 
-										method="POST" class="d-inline">
-										@csrf
-										@method('DELETE')
-										<button type="submit" class="btn btn-danger" 
-											onclick="return confirm('Are you sure you want to delete this entry?')">
-											Delete Entry
-										</button>
-									</form>
-								@endif
-							</div>
-						@endif
-					@endauth
-				</div>
+<div class="card">
+	<div class="card-header">
+		<h5 class="mb-0">Detail Buku Tamu</h5>
+	</div>
+	<div class="card-body">
+		<div class="row">
+			<div class="col-md-6">
+				<table class="table">
+					<tr>
+						<th width="200">Nama</th>
+						<td>{{ $bukutamu->member->nama }}</td>
+					</tr>
+					<tr>
+						<th>Pesan</th>
+						<td>{{ $bukutamu->messages }}</td>
+					</tr>
+					<tr>
+						<th>Tanggal</th>
+						<td>{{ $bukutamu->created_at->format('d/m/Y H:i') }}</td>
+					</tr>
+				</table>
 			</div>
+			<div class="col-md-6">
+				@if($bukutamu->gambar)
+					<img src="{{ Storage::url($bukutamu->gambar) }}" 
+						 alt="Gambar" class="img-fluid rounded">
+				@else
+					<div class="alert alert-info">
+						Tidak ada gambar
+					</div>
+				@endif
+			</div>
+		</div>
+
+		<div class="mt-3">
+			<a href="{{ route('bukutamu.index') }}" class="btn btn-secondary">
+				Kembali
+			</a>
+			
+			@auth
+				@if(auth()->user()->isAdmin() || auth()->id() === $bukutamu->member_id)
+					<a href="{{ route('bukutamu.edit', $bukutamu) }}" 
+					   class="btn btn-warning">
+						Edit
+					</a>
+				@endif
+
+				@if(auth()->user()->isAdmin())
+					<form action="{{ route('bukutamu.destroy', $bukutamu) }}" 
+						  method="POST" class="d-inline">
+						@csrf
+						@method('DELETE')
+						<button type="submit" class="btn btn-danger"
+								onclick="return confirm('Yakin ingin menghapus?')">
+							Hapus
+						</button>
+					</form>
+				@endif
+			@endauth
 		</div>
 	</div>
 </div>

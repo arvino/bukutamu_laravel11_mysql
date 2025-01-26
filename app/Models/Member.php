@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class Member extends Authenticatable
+class Member extends Authenticatable implements MustVerifyEmail
 {
 	use HasApiTokens, Notifiable;
 
@@ -23,7 +24,12 @@ class Member extends Authenticatable
 		'remember_token',
 	];
 
-	public function bukutamus()
+	protected $casts = [
+		'email_verified_at' => 'datetime',
+		'password' => 'hashed',
+	];
+
+	public function bukutamu()
 	{
 		return $this->hasMany(Bukutamu::class);
 	}
@@ -33,9 +39,9 @@ class Member extends Authenticatable
 		return $this->role === 'admin';
 	}
 
-	public function hasPostedToday()
+	public function canSubmitToday()
 	{
-		return $this->bukutamus()
+		return !$this->bukutamu()
 			->whereDate('created_at', today())
 			->exists();
 	}

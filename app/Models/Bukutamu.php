@@ -10,8 +10,7 @@ class Bukutamu extends Model
 	protected $fillable = [
 		'member_id',
 		'messages',
-		'gambar',
-		'timestamp'
+		'gambar'
 	];
 
 	protected $casts = [
